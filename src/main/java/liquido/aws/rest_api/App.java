@@ -1,6 +1,7 @@
 package liquido.aws.rest_api;
 
 import static spark.Spark.post;
+import static spark.Spark.after;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
@@ -15,6 +16,7 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 
 import liquido.aws.rest_api.models.VerifySignatureRequest;
+import liquido.aws.rest_api.utils.LoggerUtils;
 import liquido.aws.rest_api.utils.ObjectMapper;
 import liquido.aws.rest_api.utils.crypto.CryptoUtils;
 import liquido.aws.rest_api.utils.crypto.PdfSigner;
@@ -32,8 +34,15 @@ public class App {
 		App app = new App();
 		app.setupStaticFilesStorage();
 		app.setupRoutes();
+		app.setupLogger();
 	}
 	
+	private void setupLogger() {
+		after((request, response) -> {
+	        LoggerUtils.logReqResInfoToString(request, response);
+	    });
+	}
+
 	private void setupStaticFilesStorage() {
 		uploadDir = new File(pdfsDir);
 		uploadDir.mkdir(); // create the upload directory if it doesn't exist
@@ -66,7 +75,7 @@ public class App {
 			}
 			byte[] data = (signatureRequest.data).getBytes("UTF-8");
 			byte[] signature = CryptoUtils.toDecodedBase64ByteArray((signatureRequest.signature).getBytes());
-
+			
 			return CryptoUtils.checkSignature(data, signature,
 					CryptoUtils.getPubKeyFromCert(signatureRequest.certificateName));
 		});
@@ -92,7 +101,7 @@ public class App {
 			
 			PdfSigner.signPdf(inputFileName, outputFileName);
 			//tempFile.toFile().delete();//delete unsigned doc
-			return "<h1>Pdf Signed successfully</h1>"+uploadedName;
+			return "Pdf Signed successfully "+uploadedName;
 
 		});
 	}
