@@ -19,6 +19,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.xml.bind.DatatypeConverter;
 
+import liquido.aws.rest_api.utils.PathUtils;
+
 public class CryptoUtils {
 	
 	public static PublicKey getPubKeyFromCert(String certificateName) throws CertificateException, FileNotFoundException {

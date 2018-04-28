@@ -26,6 +26,8 @@ import com.itextpdf.text.pdf.security.MakeSignature;
 import com.itextpdf.text.pdf.security.MakeSignature.CryptoStandard;
 import com.itextpdf.text.pdf.security.PrivateKeySignature;
 
+import liquido.aws.rest_api.utils.PathUtils;
+
 public class PdfSigner {
 
 	private static final String keystoreName = "cacerts";

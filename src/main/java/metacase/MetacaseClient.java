@@ -9,6 +9,7 @@ import javax.xml.ws.handler.Handler;
 import javax.xml.ws.handler.HandlerResolver;
 import javax.xml.ws.handler.PortInfo;
 
+import liquido.aws.rest_api.utils.PathUtils;
 import metacase.handlers.CDataHandler;
 import metacase.https.bpoclientswebservice_metacase.BpoClientsWebService;
 import metacase.https.bpoclientswebservice_metacase.BpoClientsWebServiceSoap;
@@ -16,15 +17,13 @@ import metacase.https.bpoclientswebservice_metacase.SenderDataInformation;
 import metacase.https.bpoclientswebservice_metacase.SenderDataResponse;
 
 public class MetacaseClient {
-
-	private final String pathToTrustStore = "cacerts";
 	private final String trustStorePassword = "changeit";
 	
 	private final String username = "CandorUser";
 	private final String password = "C@ndor1ser";
 
     public SenderDataResponse sendDocuments(SenderDataInformation info){
-    	System.setProperty("javax.net.ssl.trustStore",pathToTrustStore);
+    	System.setProperty("javax.net.ssl.trustStore",PathUtils.getPathToTrustStore());
 		System.setProperty("javax.net.ssl.trustStorePassword",trustStorePassword);
 		
         BpoClientsWebService webService = new BpoClientsWebService();

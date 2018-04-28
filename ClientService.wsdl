@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<wsdl:definitions xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" targetNamespace="https://BpoClientsWebService.metacase.eu/" xmlns:http="http://schemas.xmlsoap.org/wsdl/http/" xmlns:soap12="http://schemas.xmlsoap.org/wsdl/soap12/" xmlns:s="http://www.w3.org/2001/XMLSchema" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/" xmlns:tns="https://BpoClientsWebService.metacase.eu/" xmlns:mime="http://schemas.xmlsoap.org/wsdl/mime/" xmlns:soapenc="http://schemas.xmlsoap.org/soap/encoding/" xmlns:tm="http://microsoft.com/wsdl/mime/textMatching/">
+	<wsdl:types>
+		<s:schema targetNamespace="https://BpoClientsWebService.metacase.eu/" elementFormDefault="qualified">
+			<s:element name="ReceiveDataFromClient">
+				<s:complexType>
+					<s:sequence>
+						<s:element name="dataInput" type="tns:SenderDataInformation" maxOccurs="1" minOccurs="0"/>
+					</s:sequence>
+				</s:complexType>
+			</s:element>
+			<s:complexType name="SenderDataInformation">
+				<s:sequence>
+					<s:element name="MessageID" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Type" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="CreationDate" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Proposal" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Company" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Bank" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="User" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Message" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="SYSTEM" type="s:string" maxOccurs="1" minOccurs="0"/>
+				</s:sequence>
+			</s:complexType>
+			<s:element name="ReceiveDataFromClientResponse">
+				<s:complexType>
+					<s:sequence>
+						<s:element name="ReceiveDataFromClientResult" type="tns:SenderDataResponse" maxOccurs="1" minOccurs="0"/>
+					</s:sequence>
+				</s:complexType>
+			</s:element>
+			<s:complexType name="SenderDataResponse">
+				<s:sequence>
+					<s:element name="MessageID" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="Result" type="s:int" maxOccurs="1" minOccurs="1"/>
+					<s:element name="Message" type="s:string" maxOccurs="1" minOccurs="0"/>
+					<s:element name="SYSTEM" type="s:string" maxOccurs="1" minOccurs="0"/>
+				</s:sequence>
+			</s:complexType>
+		</s:schema>
+	</wsdl:types>
+	<wsdl:message name="ReceiveDataFromClientSoapIn">
+		<wsdl:part name="parameters" element="tns:ReceiveDataFromClient"/>
+	</wsdl:message>
+	<wsdl:message name="ReceiveDataFromClientSoapOut">
+		<wsdl:part name="parameters" element="tns:ReceiveDataFromClientResponse"/>
+	</wsdl:message>
+	<wsdl:portType name="BpoClientsWebServiceSoap">
+		<wsdl:operation name="ReceiveDataFromClient">
+			<wsdl:input message="tns:ReceiveDataFromClientSoapIn"/>
+			<wsdl:output message="tns:ReceiveDataFromClientSoapOut"/>
+		</wsdl:operation>
+	</wsdl:portType>
+	<wsdl:binding name="BpoClientsWebServiceSoap" type="tns:BpoClientsWebServiceSoap">
+		<soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ReceiveDataFromClient">
+			<soap:operation style="document" soapAction="https://BpoClientsWebService.metacase.eu/ReceiveDataFromClient"/>
+			<wsdl:input>
+				<soap:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:binding name="BpoClientsWebServiceSoap12" type="tns:BpoClientsWebServiceSoap">
+		<soap12:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+		<wsdl:operation name="ReceiveDataFromClient">
+			<soap12:operation style="document" soapAction="https://BpoClientsWebService.metacase.eu/ReceiveDataFromClient"/>
+			<wsdl:input>
+				<soap12:body use="literal"/>
+			</wsdl:input>
+			<wsdl:output>
+				<soap12:body use="literal"/>
+			</wsdl:output>
+		</wsdl:operation>
+	</wsdl:binding>
+	<wsdl:service name="BpoClientsWebService">
+		<wsdl:port name="BpoClientsWebServiceSoap" binding="tns:BpoClientsWebServiceSoap">
+			<soap:address location="http://localhost:64013/BpoClientsWebService.asmx"/>
+		</wsdl:port>
+		<wsdl:port name="BpoClientsWebServiceSoap12" binding="tns:BpoClientsWebServiceSoap12">
+			<soap12:address location="http://localhost:64013/BpoClientsWebService.asmx"/>
+		</wsdl:port>
+	</wsdl:service>
+</wsdl:definitions>
