@@ -29,8 +29,6 @@ import com.itextpdf.text.pdf.security.PrivateKeySignature;
 import liquido.aws.rest_api.utils.PathUtils;
 
 public class PdfSigner {
-
-	private static final String keystoreName = "cacerts";
 	private static final String keystorePassword = "changeit";
 	private static final String keyAlias = "selfsigned";
 	private static final String keyPassword = "changeit";
@@ -46,10 +44,14 @@ public class PdfSigner {
 			throws FileNotFoundException, IOException, DocumentException, GeneralSecurityException {
 		setupBouncyCastle();
 		
+		String keystorePath = PathUtils.getKeyStorePath();
+		String keystorePass = CryptoUtils.getKeyStorePassword();
+		String keyAlias = CryptoUtils.getSigningPubKeyAlias();
+		String keyPass = CryptoUtils.getKeyPassByAlias(keyAlias);
+		
 		KeyStore ks = KeyStore.getInstance("JKS");
-		String keystorePath = PathUtils.getPathToResourceByName("/certs/"+keystoreName);
-		ks.load(new FileInputStream(keystorePath), keystorePassword.toCharArray());
-		PrivateKey pk = (PrivateKey) ks.getKey(keyAlias, keyPassword.toCharArray());
+		ks.load(new FileInputStream(keystorePath), keystorePass.toCharArray());
+		PrivateKey pk = (PrivateKey) ks.getKey(keyAlias, keyPass.toCharArray());
 		Certificate[] chain = ks.getCertificateChain(keyAlias);
 		String provider = BouncyCastleProvider.PROVIDER_NAME;
 		

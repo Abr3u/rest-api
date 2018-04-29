@@ -1,7 +1,6 @@
 package liquido.aws.rest_api.utils;
 
 import java.io.IOException;
-import java.nio.file.FileAlreadyExistsException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -12,14 +11,19 @@ public class PathUtils {
 
 	private static final String resourcesDir = "src/main/resources/";
 	private static final String pathToTrustStore = resourcesDir + "certs/cacerts";
+	private static final String pathToKeyStore = resourcesDir + "certs/mkeystore";
 	private static final String logDir = "logs/";
 
-	public static String getPathToResourceByName(String fileName) {
+	public static String getResourcePathByName(String fileName) {
 		return resourcesDir + fileName;
 	}
 
-	public static String getPathToTrustStore() {
+	public static String getTrustStorePath() {
 		return pathToTrustStore;
+	}
+	
+	public static String getKeyStorePath() {
+		return pathToKeyStore;
 	}
 
 	public static String getPathToLogFile() throws IOException {

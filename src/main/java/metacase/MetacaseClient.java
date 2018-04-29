@@ -23,7 +23,7 @@ public class MetacaseClient {
 	private final String password = "C@ndor1ser";
 
     public SenderDataResponse sendDocuments(SenderDataInformation info){
-    	System.setProperty("javax.net.ssl.trustStore",PathUtils.getPathToTrustStore());
+    	System.setProperty("javax.net.ssl.trustStore",PathUtils.getTrustStorePath());
 		System.setProperty("javax.net.ssl.trustStorePassword",trustStorePassword);
 		
         BpoClientsWebService webService = new BpoClientsWebService();

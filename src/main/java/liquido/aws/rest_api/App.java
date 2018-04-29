@@ -1,7 +1,7 @@
 package liquido.aws.rest_api;
 
-import static spark.Spark.post;
 import static spark.Spark.after;
+import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
 import java.io.File;
@@ -18,11 +18,13 @@ import com.google.gson.GsonBuilder;
 import liquido.aws.rest_api.models.VerifySignatureRequest;
 import liquido.aws.rest_api.utils.LoggerUtils;
 import liquido.aws.rest_api.utils.ObjectMapper;
+import liquido.aws.rest_api.utils.PathUtils;
 import liquido.aws.rest_api.utils.crypto.CryptoUtils;
 import liquido.aws.rest_api.utils.crypto.PdfSigner;
 import metacase.MetacaseClient;
 import metacase.https.bpoclientswebservice_metacase.SenderDataInformation;
 import metacase.https.bpoclientswebservice_metacase.SenderDataResponse;
+import spark.Spark;
 
 public class App {
 	private static final int HTTP_BAD_REQUEST = 500;
@@ -33,10 +35,15 @@ public class App {
 	public static void main(String[] args) {
 		App app = new App();
 		app.setupStaticFilesStorage();
+		//app.setupTrustAndKeyStore();
 		app.setupRoutes();
 		app.setupLogger();
 	}
 	
+	private void setupTrustAndKeyStore(){
+		Spark.secure(PathUtils.getKeyStorePath(), CryptoUtils.getKeyStorePassword(), PathUtils.getTrustStorePath(), CryptoUtils.getTrustStorePassword());
+	}
+
 	private void setupLogger() {
 		after((request, response) -> {
 	        LoggerUtils.logReqResInfoToString(request, response);
@@ -52,7 +59,17 @@ public class App {
 
 	public void setupRoutes() {
 		post("/sendDocMetacase", (req, res) -> {
+			String signatureStr = ObjectMapper.getSignatureFromRequestXml(req);
 			SenderDataInformation info = ObjectMapper.getInfoFromRequestXml(req);
+			
+			byte[] data = info.getMessage().getBytes("UTF-8");
+			byte[] signature = CryptoUtils.toDecodedBase64ByteArray(signatureStr.getBytes());
+			
+			boolean valid = CryptoUtils.checkSignature(data, signature, CryptoUtils.getSigningPubKey());
+			if(!valid) {
+				res.status(HTTP_BAD_REQUEST);
+				return "Invalid Request - Bad Signature";
+			}
 			
 			//call webservice
 			MetacaseClient client = new MetacaseClient();
@@ -63,6 +80,8 @@ public class App {
 			Gson gson = builder.create();
 			
 			return gson.toJson(response);
+			
+			
 		});
 		
 		post("/validSignature", (req, res) -> {

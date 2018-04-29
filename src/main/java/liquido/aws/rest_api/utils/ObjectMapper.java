@@ -93,5 +93,13 @@ public class ObjectMapper {
 	    }
 	    return "";
 	  }
+
+	public static String getSignatureFromRequestXml(Request req) {
+		Document doc = getDomElement(req.body());
+
+		NodeList nodes = doc.getElementsByTagName("Signature");
+		Element node = (Element) nodes.item(0);
+		return node.getTextContent();
+	}
 	
 }
