@@ -27,7 +27,7 @@ public class ValidSignatureHandler extends AbstractRequestHandler<ValidSignature
 			boolean valid = CryptoUtils.checkSignature(data, signature,
 					CryptoUtils.getPubKeyFromCert(value.certificateName));
 			
-			return (valid) ? Answer.ok("Valid"): Answer.nok("Invalid");
+			return (valid) ? Answer.ok("Valid"): Answer.ok("Invalid");
 		} catch (FileNotFoundException e) {
 			return Answer.nok("Certificate Not Found");
 		} catch (CertificateException e) {

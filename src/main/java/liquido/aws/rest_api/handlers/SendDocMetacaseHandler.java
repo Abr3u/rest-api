@@ -31,9 +31,8 @@ public class SendDocMetacaseHandler extends AbstractRequestHandler<XmlRequest> {
 		String signatureStr = ObjectMapper.getSignatureFromRequestXml(value.body);
 		SenderDataInformation info = ObjectMapper.getInfoFromRequestXml(value.body);
 
-		byte[] data;
 		try {
-			data = info.getMessage().getBytes("UTF-8");
+			byte[] data = info.getMessage().getBytes("UTF-8");
 			byte[] signature = CryptoUtils.toDecodedBase64ByteArray(signatureStr.getBytes());
 
 			boolean valid = CryptoUtils.checkSignature(data, signature, CryptoUtils.getSigningPubKey());
