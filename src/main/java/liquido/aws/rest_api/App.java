@@ -12,45 +12,38 @@ import java.nio.file.StandardCopyOption;
 
 import javax.servlet.MultipartConfigElement;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
-import liquido.aws.rest_api.models.VerifySignatureRequest;
+import liquido.aws.rest_api.handlers.SendDocMetacaseHandler;
+import liquido.aws.rest_api.handlers.ValidSignatureHandler;
 import liquido.aws.rest_api.utils.LoggerUtils;
-import liquido.aws.rest_api.utils.ObjectMapper;
 import liquido.aws.rest_api.utils.PathUtils;
 import liquido.aws.rest_api.utils.crypto.CryptoUtils;
 import liquido.aws.rest_api.utils.crypto.PdfSigner;
-import metacase.MetacaseClient;
-import metacase.https.bpoclientswebservice_metacase.SenderDataInformation;
-import metacase.https.bpoclientswebservice_metacase.SenderDataResponse;
 import spark.Spark;
 
 public class App {
-	private static final int HTTP_BAD_REQUEST = 500;
-	
-	private static final String pdfsDir = "pdfs/";
 	private static File uploadDir;
 
 	public static void main(String[] args) {
 		App app = new App();
 		app.setupStaticFilesStorage();
-		//app.setupTrustAndKeyStore();
+		// app.setupTrustAndKeyStore();
 		app.setupRoutes();
 		app.setupLogger();
 	}
-	
-	private void setupTrustAndKeyStore(){
-		Spark.secure(PathUtils.getKeyStorePath(), CryptoUtils.getKeyStorePassword(), PathUtils.getTrustStorePath(), CryptoUtils.getTrustStorePassword());
+
+	private void setupTrustAndKeyStore() {
+		Spark.secure(PathUtils.getKeyStorePath(), CryptoUtils.getKeyStorePassword(), PathUtils.getTrustStorePath(),
+				CryptoUtils.getTrustStorePassword());
 	}
 
 	private void setupLogger() {
 		after((request, response) -> {
-	        LoggerUtils.logReqResInfoToString(request, response);
-	    });
+			LoggerUtils.logReqResInfoToString(request, response);
+		});
 	}
 
 	private void setupStaticFilesStorage() {
+		String pdfsDir = PathUtils.getPdfsDirectory();
 		uploadDir = new File(pdfsDir);
 		uploadDir.mkdir(); // create the upload directory if it doesn't exist
 
@@ -58,49 +51,13 @@ public class App {
 	}
 
 	public void setupRoutes() {
-		post("/sendDocMetacase", (req, res) -> {
-			String signatureStr = ObjectMapper.getSignatureFromRequestXml(req);
-			SenderDataInformation info = ObjectMapper.getInfoFromRequestXml(req);
-			
-			byte[] data = info.getMessage().getBytes("UTF-8");
-			byte[] signature = CryptoUtils.toDecodedBase64ByteArray(signatureStr.getBytes());
-			
-			boolean valid = CryptoUtils.checkSignature(data, signature, CryptoUtils.getSigningPubKey());
-			if(!valid) {
-				res.status(HTTP_BAD_REQUEST);
-				return "Invalid Request - Bad Signature";
-			}
-			
-			//call webservice
-			MetacaseClient client = new MetacaseClient();
-			SenderDataResponse response = client.sendDocuments(info);
-			
-			//tranform xml response to json
-			GsonBuilder builder = new GsonBuilder();
-			Gson gson = builder.create();
-			
-			return gson.toJson(response);
-			
-			
-		});
-		
-		post("/validSignature", (req, res) -> {
-			GsonBuilder builder = new GsonBuilder();
-			Gson gson = builder.create();
-			VerifySignatureRequest signatureRequest = gson.fromJson(req.body(), VerifySignatureRequest.class);
-			if (!signatureRequest.isValid()) {
-				res.status(HTTP_BAD_REQUEST);
-				return "Invalid Request";
-			}
-			byte[] data = (signatureRequest.data).getBytes("UTF-8");
-			byte[] signature = CryptoUtils.toDecodedBase64ByteArray((signatureRequest.signature).getBytes());
-			
-			return CryptoUtils.checkSignature(data, signature,
-					CryptoUtils.getPubKeyFromCert(signatureRequest.certificateName));
-		});
-		
+		post("/sendDocMetacase",new SendDocMetacaseHandler());
+
+		post("/validSignature", new ValidSignatureHandler());
+
 		post("/signPdf", (req, res) -> {
 
+			String pdfsDir = PathUtils.getPdfsDirectory();
 			Path tempFile = Files.createTempFile(uploadDir.toPath(), "", ".pdf");
 
 			req.attribute("org.eclipse.jetty.multipartConfig", new MultipartConfigElement("/temp"));
@@ -110,17 +67,17 @@ public class App {
 			}
 			;
 			String uploadedName = tempFile.getFileName().toString();
-			
-			//files/2678359395719028.pdf
+
+			// files/2678359395719028.pdf
 			String inputFileName = pdfsDir + uploadedName;
-			//2678359395719028
-			String inputId = inputFileName.replaceAll("\\D+","");
-			//files/2678359395719028Signed.pdf
+			// 2678359395719028
+			String inputId = inputFileName.replaceAll("\\D+", "");
+			// files/2678359395719028Signed.pdf
 			String outputFileName = pdfsDir + inputId + "Signed.pdf";
-			
+
 			PdfSigner.signPdf(inputFileName, outputFileName);
-			//tempFile.toFile().delete();//delete unsigned doc
-			return "Pdf Signed successfully "+uploadedName;
+			// tempFile.toFile().delete();//delete unsigned doc
+			return "Pdf Signed successfully " + uploadedName;
 
 		});
 	}

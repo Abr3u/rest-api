@@ -13,13 +13,12 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
 
 import metacase.https.bpoclientswebservice_metacase.SenderDataInformation;
-import spark.Request;
 
 public class ObjectMapper {
 
-	public static SenderDataInformation getInfoFromRequestXml(Request req) {
+	public static SenderDataInformation getInfoFromRequestXml(String reqBody) {
 		SenderDataInformation info = new SenderDataInformation();
-		Document doc = getDomElement(req.body());
+		Document doc = getDomElement(reqBody);
 		
 		NodeList nodes = doc.getElementsByTagName("Company");
 		Element node = (Element) nodes.item(0);
@@ -94,8 +93,8 @@ public class ObjectMapper {
 	    return "";
 	  }
 
-	public static String getSignatureFromRequestXml(Request req) {
-		Document doc = getDomElement(req.body());
+	public static String getSignatureFromRequestXml(String reqBody) {
+		Document doc = getDomElement(reqBody);
 
 		NodeList nodes = doc.getElementsByTagName("Signature");
 		Element node = (Element) nodes.item(0);

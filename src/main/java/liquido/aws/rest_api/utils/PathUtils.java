@@ -10,9 +10,11 @@ import java.time.format.DateTimeFormatter;
 public class PathUtils {
 
 	private static final String resourcesDir = "src/main/resources/";
-	private static final String pathToTrustStore = resourcesDir + "certs/cacerts";
-	private static final String pathToKeyStore = resourcesDir + "certs/mkeystore";
+	private static final String pathToCertificates = resourcesDir + "certs/";
+	private static final String pathToTrustStore = pathToCertificates + "/cacerts";
+	private static final String pathToKeyStore = pathToCertificates + "/mkeystore";
 	private static final String logDir = "logs/";
+	private static final String pdfsDir = "pdfs/";
 
 	public static String getResourcePathByName(String fileName) {
 		return resourcesDir + fileName;
@@ -39,5 +41,13 @@ public class PathUtils {
 		}
 
 		return path.toString();
+	}
+
+	public static String getPathToCertificate(String certificateName) {
+		return pathToCertificates+certificateName;
+	}
+
+	public static String getPdfsDirectory() {
+		return pdfsDir;
 	}
 }

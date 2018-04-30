@@ -4,6 +4,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
+import liquido.aws.rest_api.handlers.base.Validable;
+
 
 /**
  * <p>Java class for SenderDataInformation complex type.
@@ -44,7 +46,7 @@ import javax.xml.bind.annotation.XmlType;
     "message",
     "system"
 })
-public class SenderDataInformation {
+public class SenderDataInformation implements Validable{
 
     @XmlElement(name = "MessageID")
     protected String messageID;
@@ -287,5 +289,12 @@ public class SenderDataInformation {
     			+ " // " + this.proposal + " // " + this.system + " // " + this.type + " // " + this.user
     			+ " // " + this.message;
     }
+
+	@Override
+	public boolean isValid() {
+		return bank != null && !bank.isEmpty() && company != null && !company.isEmpty() && creationDate != null && !creationDate.isEmpty()
+				&& messageID != null && !messageID.isEmpty() && proposal != null && !proposal.isEmpty() && system != null && !system.isEmpty()
+				&& type != null && !type.isEmpty() && user != null && !user.isEmpty() && message != null && !message.isEmpty();
+	}
 
 }

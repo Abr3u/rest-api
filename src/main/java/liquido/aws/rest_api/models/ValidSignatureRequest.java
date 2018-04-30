@@ -1,6 +1,8 @@
 package liquido.aws.rest_api.models;
 
-public class VerifySignatureRequest implements Validable{
+import liquido.aws.rest_api.handlers.base.Validable;
+
+public class ValidSignatureRequest implements Validable{
 	public String data;
 	public String signature;
 	public String certificateName;
