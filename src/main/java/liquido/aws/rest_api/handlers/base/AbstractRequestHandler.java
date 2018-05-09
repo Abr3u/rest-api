@@ -20,6 +20,7 @@ public abstract class AbstractRequestHandler<V extends Validable> implements Req
 
     public AbstractRequestHandler(Class<V> valueClass){
         this.valueClass = valueClass;
+        this.isXmlRequest = false;
     }
     
     public AbstractRequestHandler(Class<V> valueClass, boolean isXmlRequest){

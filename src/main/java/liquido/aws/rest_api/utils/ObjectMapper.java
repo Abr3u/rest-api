@@ -101,4 +101,21 @@ public class ObjectMapper {
 		return node.getTextContent();
 	}
 	
+	public static String getMessageFromRequestXml(String reqBody) {
+		Document doc = getDomElement(reqBody);
+
+		NodeList nodes = doc.getElementsByTagName("Message");
+		Element node = (Element) nodes.item(0);
+		String value = getCharacterDataFromElement(node);
+		return (!value.isEmpty()) ? value : node.getTextContent();
+	}
+
+	public static String getCertNameFromRequestXml(String body) {
+		Document doc = getDomElement(body);
+
+		NodeList nodes = doc.getElementsByTagName("CertificateName");
+		Element node = (Element) nodes.item(0);
+		return node.getTextContent();
+	}
+	
 }

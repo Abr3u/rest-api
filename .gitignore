@@ -27,3 +27,4 @@ pdfs/*
 target/*
 logs/*
 /target/
+src/log.txt

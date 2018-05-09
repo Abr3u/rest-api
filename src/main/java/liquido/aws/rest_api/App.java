@@ -14,6 +14,7 @@ import javax.servlet.MultipartConfigElement;
 
 import liquido.aws.rest_api.handlers.SendDocMetacaseHandler;
 import liquido.aws.rest_api.handlers.ValidSignatureHandler;
+import liquido.aws.rest_api.handlers.ValidSignatureXmlHandler;
 import liquido.aws.rest_api.utils.LoggerUtils;
 import liquido.aws.rest_api.utils.PathUtils;
 import liquido.aws.rest_api.utils.crypto.CryptoUtils;
@@ -24,11 +25,18 @@ public class App {
 	private static File uploadDir;
 
 	public static void main(String[] args) {
+		/*System.setProperty("com.sun.xml.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.client.HttpTransportPipe.dump", "true");
+		System.setProperty("com.sun.xml.ws.transport.http.HttpAdapter.dump", "true");
+		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");*/
+		
 		App app = new App();
 		app.setupStaticFilesStorage();
 		// app.setupTrustAndKeyStore();
 		app.setupRoutes();
 		app.setupLogger();
+		
+		
 	}
 
 	private void setupTrustAndKeyStore() {
@@ -39,6 +47,7 @@ public class App {
 	private void setupLogger() {
 		after((request, response) -> {
 			LoggerUtils.logReqResInfoToString(request, response);
+			System.out.println("---> "+request.requestMethod()+" "+request.url()+" ::: "+response.status()+" "+response.body());
 		});
 	}
 
@@ -54,6 +63,7 @@ public class App {
 		post("/sendDocMetacase",new SendDocMetacaseHandler());
 
 		post("/validSignature", new ValidSignatureHandler());
+		post("/validSignatureXML", new ValidSignatureXmlHandler());
 
 		post("/signPdf", (req, res) -> {
 
