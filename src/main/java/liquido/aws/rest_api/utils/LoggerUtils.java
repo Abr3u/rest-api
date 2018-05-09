@@ -16,19 +16,16 @@ public class LoggerUtils {
 	public static void logReqResInfoToString(Request request, Response response) throws IOException {
 		DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");
 		LocalDateTime now = LocalDateTime.now();
-		StringBuilder sb = new StringBuilder();
-		sb.append("\n [" + dtf.format(now)+"]");
-		sb.append("Request: \n");
-		sb.append(request.requestMethod());
-		sb.append(" " + request.url());
-		sb.append("\n Body: " + request.body());
 		HttpServletResponse raw = response.raw();
-		sb.append("\n Reponse: " + raw.getStatus());
-		sb.append("\n Body: " + response.body());
-		sb.append("\n");
-		String log = sb.toString();
+		String a = "\n\n[" + dtf.format(now)+"]";
+		a += "Request: ";
+		a += request.requestMethod();
+		a += " " + request.url();
+		a += "\n Body: " + request.body();
+		a += "\n Reponse: " + raw.getStatus();
+		a += " Body: " + response.body();
 
-		appendToFile(PathUtils.getPathToLogFile(), log);
+		appendToFile(PathUtils.getPathToLogFile(), a);
 	}
 
 	private static void appendToFile(String filePath, String text) throws IOException {
