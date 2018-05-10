@@ -1,6 +1,7 @@
 package liquido.aws.rest_api;
 
 import static spark.Spark.after;
+import static spark.Spark.port;
 import static spark.Spark.post;
 import static spark.Spark.staticFiles;
 
@@ -31,12 +32,22 @@ public class App {
 		System.setProperty("com.sun.xml.internal.ws.transport.http.HttpAdapter.dump", "true");*/
 		
 		App app = new App();
+		app.setPort();
 		app.setupStaticFilesStorage();
 		// app.setupTrustAndKeyStore();
 		app.setupRoutes();
 		app.setupLogger();
-		
-		
+	}
+
+	private void setPort() {
+		ProcessBuilder processBuilder = new ProcessBuilder();
+		//running on heroku
+        if (processBuilder.environment().get("PORT") != null) {
+            port(Integer.parseInt(processBuilder.environment().get("PORT")));
+        }
+        else {
+        	port(4567);
+        }
 	}
 
 	private void setupTrustAndKeyStore() {

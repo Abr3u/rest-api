@@ -8,17 +8,11 @@ import java.security.SignatureException;
 import java.security.cert.CertificateException;
 import java.util.Map;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 import liquido.aws.rest_api.handlers.base.AbstractRequestHandler;
 import liquido.aws.rest_api.handlers.base.Answer;
 import liquido.aws.rest_api.models.XmlRequest;
 import liquido.aws.rest_api.utils.ObjectMapper;
 import liquido.aws.rest_api.utils.crypto.CryptoUtils;
-import metacase.MetacaseClient;
-import metacase.https.bpoclientswebservice_metacase.SenderDataInformation;
-import metacase.https.bpoclientswebservice_metacase.SenderDataResponse;
 
 public class ValidSignatureXmlHandler extends AbstractRequestHandler<XmlRequest> {
 

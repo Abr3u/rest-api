@@ -39,6 +39,16 @@ public class SendDocMetacaseHandler extends AbstractRequestHandler<XmlRequest> {
 			if (!valid) {
 				return Answer.nok("Invalid Request - Bad Signature");
 			}
+			
+			// call webservice
+			MetacaseClient client = new MetacaseClient();
+			SenderDataResponse response = client.sendDocuments(info);
+
+			// tranform xml response to json
+			GsonBuilder builder = new GsonBuilder();
+			Gson gson = builder.create();
+			String body = gson.toJson(response);
+			return Answer.ok(body);
 		} catch (FileNotFoundException e) {
 			return Answer.nok("Certificate Not Found");
 		} catch (CertificateException e) {
@@ -46,18 +56,13 @@ public class SendDocMetacaseHandler extends AbstractRequestHandler<XmlRequest> {
 		} catch (SignatureException | ArrayIndexOutOfBoundsException e) {
 			return Answer.nok("Badly Formatted Signature");
 		} catch (InvalidKeyException | NoSuchAlgorithmException | UnsupportedEncodingException e) {
+			return Answer.nok("Unexpected Crypto Error: "+e.getMessage());
+		}
+		catch (Exception e) {
 			return Answer.nok("Unexpected Error: "+e.getMessage());
 		}
 		
-		// call webservice
-		MetacaseClient client = new MetacaseClient();
-		SenderDataResponse response = client.sendDocuments(info);
-
-		// tranform xml response to json
-		GsonBuilder builder = new GsonBuilder();
-		Gson gson = builder.create();
-		String body = gson.toJson(response);
-		return Answer.ok(body);
+		
 	}
 
 }
